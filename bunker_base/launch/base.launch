@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="bunker_port" default="can0"/>
+  <arg name="pub_description" default="true"/>
+  <arg name="enable_ekf" default="false"/>
+
+  <group if="$(arg pub_description)">
+    <arg name="model" default="$(find xacro)/xacro --inorder $(find bunker_description)/urdf/bunker.xacro"/>
+    <param name="robot_description" command="$(arg model)"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  </group>
+
+  <!-- SocketCan bridge -->
+  <node pkg="socketcan_bridge" type="socketcan_bridge_node" name="socketcan_bridge_node" output="screen">
+    <param name="can_device" type="string" value="$(arg bunker_port)"/>
+  </node>
+
+  <!-- bunker harware driver -->
+  <node pkg="bunker_base" type="bunker_base_node" name="bunker_base_node" output="screen">
+    <param name="can_id" type="int" value="0"/>
+    <param name="can_send_topic" type="string" value="sent_messages"/>
+    <param name="can_receive_topic" type="string" value="received_messages"/>
+  </node>
+
+  <!-- Differential controller parameters and basic localization -->
+  <include file="$(find bunker_control)/launch/control.launch">
+    <arg name="enable_odom_tf" value="false" if="$(arg enable_ekf)"/>
+  </include>
+
+  <!-- joy control -->
+  <include file="$(find iqr_teleop)/launch/joy_teleop.launch"/>
+
+  <!-- Robot pose ekf -->
+  <group if="$(arg enable_ekf)">
+    <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf" output="screen">
+      <param name="output_frame" value="odom"/>
+      <param name="base_footprint_frame" value="base_footprint"/>
+      <param name="freq" value="50.0"/>
+      <param name="sensor_timeout" value="1.0"/>
+      <param name="odom_used" value="true"/>
+      <param name="imu_used" value="true"/>
+      <param name="vo_used" value="false"/>
+      <param name="debug" value="false"/>
+      <param name="self_diagnose" value="false"/>
+      <remap from="imu_data" to="/imu/data"/>
+      <remap from="odom" to="/bunker_velocity_controller/odom"/>
+    </node>
+  </group>
+  
+</launch>

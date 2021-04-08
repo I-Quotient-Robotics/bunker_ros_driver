@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<robot name="bunker_v2" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Variables -->
+  <xacro:property name="M_PI" value="3.1415926"/>
+
+  <!-- Vehicle Geometries -->
+  <xacro:property name="base_x_size" value="1.023000"/>
+  <xacro:property name="base_y_size" value="0.778000"/>
+  <xacro:property name="base_z_size" value="0.383000"/>
+
+  <xacro:property name="wheel_base" value="0.555"/>
+  <xacro:property name="wheel_radius" value="0.104"/>
+
+  <!-- base footprint -->
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 0.10205044" rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  <!-- base link -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://bunker_description/meshes/bunker.stl"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.10205044" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_x_size} ${base_y_size} ${base_z_size}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- mid mount -->
+  <link name="mid_mount"/>
+  <joint name="mid_mount_joint" type="fixed">
+    <origin xyz="0.0153974 0 0.26781165" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="mid_mount"/>
+  </joint>
+
+  <!-- virtual left whell joint -->
+  <link name="left_wheel"/>
+  <joint name="left_wheel_joint" type="continuous">
+    <origin xyz="0 ${wheel_base/2} ${wheel_radius-0.10205044}" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- virtual right whell joint -->
+  <link name="right_wheel"/>
+  <joint name="right_wheel_joint" type="continuous">
+    <origin xyz="0 -${wheel_base/2} ${wheel_radius-0.10205044}" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

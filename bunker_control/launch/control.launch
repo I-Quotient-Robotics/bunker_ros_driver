@@ -1,0 +1,11 @@
+<launch>
+
+  <arg name="enable_odom_tf" default="true"/>
+
+  <rosparam command="load" file="$(find bunker_control)/config/control.yaml"/>
+
+  <param name="/bunker_velocity_controller/enable_odom_tf" value="$(arg enable_odom_tf)"/>
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" args="bunker_joint_publisher bunker_velocity_controller"/>
+
+</launch>
