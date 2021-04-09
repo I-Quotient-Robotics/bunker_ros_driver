@@ -21,6 +21,8 @@
     <param name="can_id" type="int" value="0"/>
     <param name="can_send_topic" type="string" value="sent_messages"/>
     <param name="can_receive_topic" type="string" value="received_messages"/>
+    <remap from="/bunker_velocity_controller/odom" to="/odom"/>
+    <remap from="/bunker_velocity_controller/cmd_vel" to="/cmd_vel"/>
   </node>
 
   <!-- Differential controller parameters and basic localization -->
@@ -44,7 +46,7 @@
       <param name="debug" value="false"/>
       <param name="self_diagnose" value="false"/>
       <remap from="imu_data" to="/imu/data"/>
-      <remap from="odom" to="/bunker_velocity_controller/odom"/>
+      <remap from="odom" to="/odom"/>
     </node>
   </group>
   
