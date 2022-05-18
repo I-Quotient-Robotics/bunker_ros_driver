@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   bunker_msgs
   sensor_msgs
   serial
+  can_msgs
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
